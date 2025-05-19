@@ -13,8 +13,8 @@ jobs:
     defaults:
       run:
         working-directory: ./web
-    # env:
-    #   DJANGO_SECRET_KEY: test-key-not-good-maybe-make-one-better
+    env:
+      DJANGO_SECRET_KEY: my-django-secret-key
     #   POSTGRES_DB: dockerdc
     #   POSTGRES_PASSWORD: mysecretpassword
     #   POSTGRES_USER: myuser
