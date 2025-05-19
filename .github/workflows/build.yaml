@@ -18,6 +18,7 @@ jobs:
         working-directory: ./web
     env:
       DJANGO_SECRET_KEY: my-django-secret-key 
+      CLUSTER_NAME: web-application-cluster
     steps:
     - name: checkout code
       uses: actions/checkout@v2
@@ -35,3 +36,24 @@ jobs:
           -t registry.digitalocean.com/prod-django-registry/django-k8s-web:${GITHUB_SHA::7}
     - name: push images 
       run: docker push registry.digitalocean.com/prod-django-registry/django-k8s-web --all-tags
+    - name: Login to Kubernetes Cluster 
+      run: |
+        doctl Kubernetes cluster kubeconfig save --expiry-seconds 100 ${{ env.CLUSTER_NAME }}
+    - name: Update Deployment Images 
+      run: |
+        kubectl set image deployment/django-webapp-deployment django-k8s-web=registry.digitalocean.com/prod-django-registry/django-k8s-web:${GITHUB_SHA::7}
+    - name: wait for rollout
+      run: |
+        kubectl rollout status deployment/django-webapp-deployment
+
+    - name: Allow sleep time for update 
+      run: sleep 20
+    
+    - name:
+      run: | 
+        export SINGLE_POD_NAME=$(kubectl get pod -l app=django-webapp-deployment -o jsonpath="{.items[0].metadata.name}")
+        kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh 
+    - name: Check new image status 
+      run: |
+        export $IMAGE_NAME=$(kubectl get pod -l app=django-webapp-deployment -o jsonpath="{.items[0].spec.template.spec.container.image}")
+        kubectl describe pod $$IMAGE_NAME
