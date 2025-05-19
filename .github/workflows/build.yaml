@@ -38,7 +38,7 @@ jobs:
       run: docker push registry.digitalocean.com/prod-django-registry/django-k8s-web --all-tags
     - name: Login to Kubernetes Cluster 
       run: |
-        doctl Kubernetes cluster kubeconfig save --expiry-seconds 100 ${{ env.CLUSTER_NAME }}
+        doctl kubernetes cluster kubeconfig save --expiry-seconds 100 ${{ env.CLUSTER_NAME }}
     - name: Update Deployment Images 
       run: |
         kubectl set image deployment/django-webapp-deployment django-k8s-web=registry.digitalocean.com/prod-django-registry/django-k8s-web:${GITHUB_SHA::7}
