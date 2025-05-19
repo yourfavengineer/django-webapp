@@ -2,6 +2,7 @@ web/.prod.env
 web/.env
 .DS_Store
 .kube/
+hist.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

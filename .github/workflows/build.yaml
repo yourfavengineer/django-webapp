@@ -19,4 +19,19 @@ jobs:
     env:
       DJANGO_SECRET_KEY: my-django-secret-key 
     steps:
-      - uses: actions/checkout@v2
+    - name: checkout code
+      uses: actions/checkout@v2
+    - name: install digital ocean CLI
+      uses: digitalocean/action-doctl@v2 
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: Login to Docker container registry
+      run: doctl registry login --expiry-seconds 200
+    - name: build docker container images 
+      working-directory: ./web 
+      run: | 
+        docker build -f Dockerfile \
+          -t registry.digitalocean.com/cfe-k8s/django-k8s-web:latest \
+          -t registry.digitalocean.com/cfe-k8s/django-k8s-web:${GITHUB_SHA::7}
+    - name: push images 
+      run: docker push registry.digitalocean.com/cfe-k8s/django-k8s-web --all-tags
