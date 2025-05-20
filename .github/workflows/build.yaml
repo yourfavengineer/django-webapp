@@ -56,3 +56,5 @@ jobs:
     - name: Check new image status 
       run: |
         kubectl get pods 
+
+#run for production
