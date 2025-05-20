@@ -49,7 +49,7 @@ jobs:
     - name: Allow sleep time for update 
       run: sleep 20
     
-    - name:
+    - name: run migrate.sh file 
       run: | 
         export SINGLE_POD_NAME=$(kubectl get pod -l app=django-webapp-deployment -o jsonpath="{.items[0].metadata.name}")
         kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh 
