@@ -55,5 +55,4 @@ jobs:
         kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh 
     - name: Check new image status 
       run: |
-        export IMAGE_NAME=$(kubectl get pods -l app=django-webapp-deployment -o jsonpath="{.items[0].spec.containers[0].image}")
-        kubectl describe pod $IMAGE_NAME
+        kubectl get pods 
